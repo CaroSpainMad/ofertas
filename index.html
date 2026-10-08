@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f766e">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Ofertas">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png">
+<title>Calculadora de ofertas</title>
+<style>
+:root{
+  --bg:#f4f6f5; --card:#ffffff; --ink:#14201d; --muted:#5b6b66; --line:#dbe3e0;
+  --brand:#0f766e; --brand-ink:#ffffff; --good:#0a7d3b; --good-bg:#e3f5ea;
+  --warn:#9a5b00; --warn-bg:#fff3dc; --bad:#b42318; --field:#f0f4f2;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0e1514; --card:#172220; --ink:#e8f0ed; --muted:#98aaa4; --line:#27363a;
+    --brand:#2dd4bf; --brand-ink:#04211d; --good:#5be08f; --good-bg:#12301f;
+    --warn:#ffc96b; --warn-bg:#352709; --bad:#ff8a80; --field:#0f1a19;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  padding:0 16px calc(32px + env(safe-area-inset-bottom));
+}
+header{
+  padding:calc(14px + env(safe-area-inset-top)) 0 10px;
+}
+h1{font-size:20px; margin:0}
+.sub{color:var(--muted); font-size:13px; margin-top:2px}
+h2{font-size:15px; margin:22px 0 8px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted)}
+.card{
+  background:var(--card); border:1px solid var(--line); border-radius:14px;
+  padding:14px; margin-bottom:12px;
+}
+label{display:block; font-size:12px; color:var(--muted); margin-bottom:4px}
+input,select{
+  width:100%; font:inherit; color:var(--ink); background:var(--field);
+  border:1px solid var(--line); border-radius:10px; padding:10px 11px; min-height:44px;
+}
+input:focus,select:focus{outline:2px solid var(--brand); outline-offset:1px}
+.grid{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+.grid3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px}
+.full{grid-column:1/-1}
+.row{display:flex; gap:8px; align-items:center}
+button{
+  font:inherit; min-height:44px; padding:0 14px; border-radius:10px; cursor:pointer;
+  border:1px solid var(--line); background:var(--field); color:var(--ink);
+}
+button.primary{background:var(--brand); color:var(--brand-ink); border-color:var(--brand); font-weight:600}
+button.danger{color:var(--bad)}
+.btns{display:flex; gap:8px; margin-top:12px}
+.btns button{flex:1}
+.res{
+  display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:12px;
+  padding-top:12px; border-top:1px dashed var(--line);
+}
+.res div{min-width:0}
+.res .k{font-size:11px; color:var(--muted)}
+.res .v{font-size:17px; font-weight:650; font-variant-numeric:tabular-nums}
+.res .v.big{font-size:20px}
+.save{
+  margin-top:10px; padding:8px 10px; border-radius:10px; font-size:13px;
+  background:var(--good-bg); color:var(--good);
+}
+.save.none{background:var(--field); color:var(--muted)}
+.best{font-size:13px; color:var(--muted); margin-top:8px}
+details{margin-top:10px}
+summary{cursor:pointer; color:var(--brand); font-size:14px; min-height:32px; display:flex; align-items:center}
+table{width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; font-size:13px}
+th,td{padding:7px 5px; text-align:right; border-bottom:1px solid var(--line); white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--muted); font-weight:600; font-size:11px}
+tr.hi td{background:var(--good-bg); color:var(--good); font-weight:650}
+.rank td:first-child{white-space:normal; max-width:128px; line-height:1.25}
+.tag{display:inline-block; font-size:10px; padding:1px 6px; border-radius:999px; margin-left:4px;
+  background:var(--good-bg); color:var(--good); vertical-align:middle; font-weight:650}
+.tag.w{background:var(--warn-bg); color:var(--warn)}
+.note{font-size:12px; color:var(--muted); margin:6px 2px}
+.ideas{font-size:13px; color:var(--muted); padding-left:18px; margin:6px 0 0}
+.ideas li{margin:3px 0}
+.tools{display:flex; gap:8px; margin-top:6px}
+.tools button{flex:1; font-size:14px}
+</style>
+</head>
+<body>
+<header>
+  <h1>Calculadora de ofertas</h1>
+  <div class="sub">Compara el precio real por kilo de atún escurrido, con y sin oferta.</div>
+</header>
+
+<main>
+  <h2>Lo que necesito</h2>
+  <div class="card">
+    <div class="grid">
+      <div>
+        <label for="objetivo">Latas / unidades necesarias</label>
+        <input id="objetivo" inputmode="numeric" autocomplete="off" value="12">
+      </div>
+      <div>
+        <label>&nbsp;</label>
+        <div class="note" style="margin:0;padding-top:8px">Se compran los packs mínimos para llegar a esa cantidad.</div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Ranking</h2>
+  <div class="card" id="ranking"></div>
+
+  <h2>Opciones</h2>
+  <div id="cards"></div>
+  <div class="tools">
+    <button class="primary" id="add">+ Añadir opción</button>
+    <button id="reset">Restaurar ejemplos</button>
+  </div>
+
+  <h2>Tipos de oferta que calcula</h2>
+  <div class="card">
+    <ul class="ideas">
+      <li><b>2ª unidad con -X %</b> (El Corte Inglés -70 %, Mercadona/Dia -50 %)</li>
+      <li><b>Lleva N, paga M</b> (3x2, 2x1, 4x3)</li>
+      <li><b>Descuento directo %</b> (-20 %, -30 %)</li>
+      <li><b>N unidades por un precio fijo</b> (2 por 9 €)</li>
+      <li><b>Ahorra X % al comprar N o más</b> (Amazon "ahorra 5 % al comprar 4")</li>
+      <li><b>Descuento en € por pack</b> (cupón de 1 € por unidad)</li>
+    </ul>
+  </div>
+  <p class="note">Los precios se guardan solo en este móvil. €/kg se calcula sobre peso neto escurrido, no sobre peso total.</p>
+</main>
+
+<script>
+"use strict";
+
+/* ---------- Tipos de oferta ---------- */
+const OFERTAS = {
+  none:   { label: "Sin oferta", params: [] },
+  second: { label: "2ª unidad con -X %", params: [
+            { k: "x", label: "Descuento 2ª unidad (%)", def: 70 } ] },
+  nxm:    { label: "Lleva N, paga M (3x2…)", params: [
+            { k: "n", label: "Llevas", def: 3 },
+            { k: "m", label: "Pagas",  def: 2 } ] },
+  pct:    { label: "Descuento directo %", params: [
+            { k: "x", label: "Descuento (%)", def: 20 } ] },
+  lote:   { label: "N unidades por precio fijo", params: [
+            { k: "n", label: "Unidades del lote", def: 2 },
+            { k: "y", label: "Precio del lote (€)", def: 9 } ] },
+  minpct: { label: "Ahorra X % si compras N+", params: [
+            { k: "n", label: "Compra mínima (packs)", def: 4 },
+            { k: "x", label: "Descuento (%)", def: 5 } ] },
+  eur:    { label: "Descuento € por pack", params: [
+            { k: "d", label: "Descuento por pack (€)", def: 1 } ] }
+};
+
+/* ---------- Cálculo ---------- */
+function r2(x){ return Math.round(x * 100 + 1e-6) / 100; }
+
+// Importe total de q packs al precio p con la oferta indicada.
+function totalPacks(q, p, tipo, o){
+  q = Math.max(0, Math.floor(q) || 0);
+  p = p || 0;
+  switch (tipo){
+    case "second": {
+      const pares = Math.floor(q / 2);
+      const par = r2(p + p * (1 - (o.x || 0) / 100));
+      return r2(pares * par + (q % 2) * p);
+    }
+    case "nxm": {
+      const n = Math.max(1, Math.floor(o.n) || 1);
+      const m = Math.min(Math.max(0, o.m || 0), n);
+      const g = Math.floor(q / n);
+      return r2(g * m * p + (q - g * n) * p);
+    }
+    case "pct":
+      return r2(q * p * (1 - (o.x || 0) / 100));
+    case "lote": {
+      const n = Math.max(1, Math.floor(o.n) || 1);
+      const g = Math.floor(q / n);
+      return r2(g * (o.y || 0) + (q - g * n) * p);
+    }
+    case "minpct":
+      return r2(q >= (o.n || 0) ? q * p * (1 - (o.x || 0) / 100) : q * p);
+    case "eur":
+      return r2(q * Math.max(0, p - (o.d || 0)));
+    default:
+      return r2(q * p);
+  }
+}
+
+function calc(it, objetivo){
+  const lp = Math.max(1, Math.floor(it.latas) || 1);
+  const packs = Math.max(1, Math.ceil(Math.max(1, objetivo) / lp));
+  const latas = packs * lp;
+  const total = totalPacks(packs, it.precio, it.oferta, it.o);
+  const base = r2(packs * it.precio);
+  const kg = latas * (it.g || 0) / 1000;
+  return {
+    packs, latas, total, base,
+    ahorro: base - total,
+    pct: base > 0 ? (base - total) / base : 0,
+    perLata: total / latas,
+    perPack: total / packs,
+    perKg: kg > 0 ? total / kg : null
+  };
+}
+
+function mejorCantidad(it){
+  let best = null;
+  for (let q = 1; q <= 24; q++){
+    const t = totalPacks(q, it.precio, it.oferta, it.o);
+    const pp = t / q;
+    if (!best || pp < best.pp - 1e-9) best = { q, t, pp };
+  }
+  const kg = best.q * Math.max(1, Math.floor(it.latas) || 1) * (it.g || 0) / 1000;
+  best.perKg = kg > 0 ? best.t / kg : null;
+  return best;
+}
+
+/* ---------- Formato ---------- */
+const nf = new Intl.NumberFormat("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const n2 = (x) => (x == null || !isFinite(x)) ? "—" : nf.format(x);
+const eur = (x) => (x == null || !isFinite(x)) ? "—" : nf.format(x) + " €";
+const num = (s) => {
+  const v = parseFloat(String(s).replace(",", ".").replace(/[^\d.\-]/g, ""));
+  return isFinite(v) ? v : 0;
+};
+const esc = (s) => String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+
+/* ---------- Estado ---------- */
+const KEY = "calc-ofertas-v1";
+function mk(nombre, precio, latas, g, oferta, o){
+  return { nombre, precio, latas, g, oferta, o: Object.assign({}, o) };
+}
+function ejemplos(){
+  return {
+    objetivo: 12,
+    items: [
+      mk("El Corte Inglés · AOVE pack 6", 11.95, 6, 48, "second", { x: 70 }),
+      mk("El Corte Inglés · aceite de oliva pack 6", 10.95, 6, 48, "second", { x: 70 }),
+      mk("Carrefour · AOVE pack 3", 6.65, 3, 55, "nxm", { n: 3, m: 2 }),
+      mk("Amazon · AOVE pack 6", 10.98, 6, 48, "none", {})
+    ]
+  };
+}
+let state;
+function cargar(){
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (raw){
+      const s = JSON.parse(raw);
+      if (s && Array.isArray(s.items)) return s;
+    }
+  } catch (e) {}
+  return ejemplos();
+}
+function guardar(){
+  try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+}
+function defaultsOferta(tipo){
+  const o = {};
+  OFERTAS[tipo].params.forEach(p => { o[p.k] = p.def; });
+  return o;
+}
+
+/* ---------- Render ---------- */
+const $cards = document.getElementById("cards");
+const $rank = document.getElementById("ranking");
+const $obj = document.getElementById("objetivo");
+
+function cardHTML(it, i){
+  const t = OFERTAS[it.oferta];
+  const opts = Object.keys(OFERTAS).map(k =>
+    `<option value="${k}"${k === it.oferta ? " selected" : ""}>${OFERTAS[k].label}</option>`).join("");
+  const params = t.params.map(p =>
+    `<div><label>${p.label}</label>
+     <input inputmode="decimal" autocomplete="off" data-o="${p.k}" value="${esc(it.o[p.k] ?? p.def)}"></div>`).join("");
+  const pcls = t.params.length === 1 ? "full" : "";
+  return `
+  <div class="card" data-i="${i}">
+    <div class="grid">
+      <div class="full">
+        <label>Nombre (tienda · producto)</label>
+        <input data-f="nombre" autocomplete="off" value="${esc(it.nombre)}">
+      </div>
+      <div><label>Precio del pack (€)</label>
+        <input inputmode="decimal" autocomplete="off" data-f="precio" value="${esc(it.precio)}"></div>
+      <div><label>Latas por pack</label>
+        <input inputmode="numeric" autocomplete="off" data-f="latas" value="${esc(it.latas)}"></div>
+      <div class="full"><label>Peso escurrido por lata (g)</label>
+        <input inputmode="decimal" autocomplete="off" data-f="g" value="${esc(it.g)}"></div>
+      <div class="full"><label>Oferta</label>
+        <select data-f="oferta">${opts}</select></div>
+      ${t.params.length ? `<div class="full"><div class="grid ${pcls}">${params}</div></div>` : ""}
+    </div>
+    <div class="res" data-res></div>
+    <div data-save></div>
+    <div class="best" data-best></div>
+    <details data-det><summary>Tabla por cantidad de packs</summary><div data-tabla></div></details>
+    <div class="btns">
+      <button data-act="dup">Duplicar</button>
+      <button class="danger" data-act="del">Eliminar</button>
+    </div>
+  </div>`;
+}
+
+function renderCards(){
+  $cards.innerHTML = state.items.map(cardHTML).join("");
+  update();
+}
+
+function update(){
+  const objetivo = Math.max(1, Math.floor(state.objetivo) || 1);
+  const calcs = state.items.map(it => calc(it, objetivo));
+
+  // Tarjetas
+  state.items.forEach((it, i) => {
+    const el = $cards.querySelector(`.card[data-i="${i}"]`);
+    if (!el) return;
+    const c = calcs[i];
+    el.querySelector("[data-res]").innerHTML = `
+      <div><div class="k">Packs</div><div class="v">${c.packs}</div></div>
+      <div><div class="k">Latas</div><div class="v">${c.latas}</div></div>
+      <div><div class="k">Total</div><div class="v big">${eur(c.total)}</div></div>
+      <div><div class="k">€ / lata</div><div class="v">${eur(c.perLata)}</div></div>
+      <div><div class="k">€ / pack</div><div class="v">${eur(c.perPack)}</div></div>
+      <div><div class="k">€ / kg escurrido</div><div class="v">${eur(c.perKg)}</div></div>`;
+    const sv = el.querySelector("[data-save]");
+    if (c.ahorro > 0.004){
+      sv.innerHTML = `<div class="save">Ahorras ${eur(c.ahorro)} (${(c.pct * 100).toFixed(0)} %) frente a ${eur(c.base)} sin oferta</div>`;
+    } else {
+      sv.innerHTML = `<div class="save none">Sin ahorro con esta cantidad (${eur(c.base)})</div>`;
+    }
+    const mb = mejorCantidad(it);
+    el.querySelector("[data-best]").textContent =
+      it.oferta === "none"
+        ? ""
+        : `Mejor precio por pack con ${mb.q} pack${mb.q > 1 ? "s" : ""}: ${eur(mb.pp)} cada uno` +
+          (mb.perKg != null ? ` · ${eur(mb.perKg)}/kg` : "");
+    // Tabla por cantidad
+    let filas = "";
+    const minpp = mb.pp;
+    for (let q = 1; q <= 12; q++){
+      const t = totalPacks(q, it.precio, it.oferta, it.o);
+      const lp = Math.max(1, Math.floor(it.latas) || 1);
+      const kg = q * lp * (it.g || 0) / 1000;
+      const base = r2(q * it.precio);
+      const hi = Math.abs(t / q - minpp) < 1e-9 ? ' class="hi"' : "";
+      filas += `<tr${hi}><td>${q}</td><td>${q * lp}</td><td>${n2(t)}</td><td>${n2(t / q)}</td><td>${kg > 0 ? n2(t / kg) : "—"}</td><td>${n2(base - t)}</td></tr>`;
+    }
+    el.querySelector("[data-tabla]").innerHTML =
+      `<table><thead><tr><th>Packs</th><th>Latas</th><th>Total €</th><th>€/pack</th><th>€/kg</th><th>Ahorro €</th></tr></thead><tbody>${filas}</tbody></table>`;
+  });
+
+  // Ranking
+  const rows = state.items.map((it, i) => ({ it, c: calcs[i] }));
+  const conKg = rows.filter(r => r.c.perKg != null).sort((a, b) => a.c.perKg - b.c.perKg);
+  const sinKg = rows.filter(r => r.c.perKg == null);
+  const orden = conKg.concat(sinKg);
+  const mejorKg = conKg.length ? conKg[0].c.perKg : null;
+  const menorGasto = rows.length ? Math.min.apply(null, rows.map(r => r.c.total)) : null;
+  if (!orden.length){
+    $rank.innerHTML = `<div class="note">Añade al menos una opción.</div>`;
+    return;
+  }
+  const filasR = orden.map((r, idx) => {
+    const tags = [];
+    if (idx === 0 && r.c.perKg != null) tags.push('<span class="tag">€/kg</span>');
+    if (Math.abs(r.c.total - menorGasto) < 0.005) tags.push('<span class="tag w">gasta menos</span>');
+    const dif = (mejorKg != null && r.c.perKg != null && idx > 0)
+      ? `+${((r.c.perKg / mejorKg - 1) * 100).toFixed(0)} %` : "—";
+    return `<tr class="${idx === 0 && r.c.perKg != null ? "hi" : ""}">
+      <td>${esc(r.it.nombre || "Sin nombre")}${tags.join("")}</td>
+      <td>${n2(r.c.total)}</td><td>${r.c.latas}</td><td>${n2(r.c.perKg)}</td><td>${dif}</td></tr>`;
+  }).join("");
+  $rank.innerHTML = `
+    <table class="rank"><thead><tr><th>Opción</th><th>Total €</th><th>Latas</th><th>€/kg</th><th>vs 1º</th></tr></thead>
+    <tbody>${filasR}</tbody></table>
+    <div class="note">Ordenado por €/kg escurrido para ${objetivo} latas como mínimo. "Gasta menos" = menor importe total, aunque lleves distinto nº de latas.</div>`;
+}
+
+/* ---------- Eventos ---------- */
+$obj.value = "";
+state = cargar();
+$obj.value = state.objetivo;
+
+$obj.addEventListener("input", () => {
+  state.objetivo = Math.max(1, Math.floor(num($obj.value)) || 1);
+  guardar(); update();
+});
+
+$cards.addEventListener("input", (e) => {
+  const card = e.target.closest(".card");
+  if (!card) return;
+  const it = state.items[+card.dataset.i];
+  const f = e.target.dataset.f, o = e.target.dataset.o;
+  if (f === "nombre") it.nombre = e.target.value;
+  else if (f === "precio" || f === "latas" || f === "g") it[f] = num(e.target.value);
+  else if (o) it.o[o] = num(e.target.value);
+  else return;
+  guardar(); update();
+});
+
+$cards.addEventListener("change", (e) => {
+  if (e.target.dataset.f !== "oferta") return;
+  const card = e.target.closest(".card");
+  const it = state.items[+card.dataset.i];
+  it.oferta = e.target.value;
+  it.o = defaultsOferta(it.oferta);
+  guardar(); renderCards();
+});
+
+$cards.addEventListener("click", (e) => {
+  const b = e.target.closest("button[data-act]");
+  if (!b) return;
+  const i = +b.closest(".card").dataset.i;
+  if (b.dataset.act === "del"){
+    state.items.splice(i, 1);
+  } else {
+    const c = JSON.parse(JSON.stringify(state.items[i]));
+    c.nombre += " (copia)";
+    state.items.splice(i + 1, 0, c);
+  }
+  guardar(); renderCards();
+});
+
+document.getElementById("add").addEventListener("click", () => {
+  state.items.push(mk("Nueva opción", 0, 1, 0, "none", {}));
+  guardar(); renderCards();
+  const cards = $cards.querySelectorAll(".card");
+  const last = cards[cards.length - 1];
+  if (last) last.scrollIntoView({ behavior: "smooth", block: "start" });
+});
+
+document.getElementById("reset").addEventListener("click", () => {
+  if (!confirm("¿Restaurar los ejemplos? Se perderán tus opciones.")) return;
+  state = ejemplos();
+  $obj.value = state.objetivo;
+  guardar(); renderCards();
+});
+
+renderCards();
+
+if ("serviceWorker" in navigator && location.protocol.indexOf("http") === 0){
+  navigator.serviceWorker.register("sw.js").catch(() => {});
+}
+</script>
+</body>
+</html>
