@@ -93,6 +93,14 @@ td.nm{white-space:normal; line-height:1.25; max-width:150px}
 .warn{font-size:13px; background:var(--warn-bg); color:var(--warn); padding:8px 10px; border-radius:10px; margin-bottom:10px}
 .tools{display:flex; gap:8px; margin-top:6px; flex-wrap:wrap}
 .tools button{flex:1; min-width:140px}
+.total{
+  display:flex; justify-content:space-between; align-items:baseline; gap:10px;
+  margin-top:14px; padding:12px 14px; border-radius:12px;
+  background:var(--brand); color:var(--brand-ink); font-weight:600;
+}
+.total b{font-size:22px; font-variant-numeric:tabular-nums; white-space:nowrap}
+.total.vacio{background:var(--field); color:var(--muted)}
+.head .acts{display:flex; gap:8px}
 .sub2{font-size:12px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; margin:14px 0 6px}
 </style>
 </head>
@@ -314,7 +322,10 @@ function cardHTML(it, i){
   <div class="card" data-i="${i}">
     <div class="head">
       <b>Registro ${i + 1}</b>
-      <button type="button" class="danger" data-act="del" aria-label="Eliminar registro ${i + 1}">Eliminar</button>
+      <div class="acts">
+        <button type="button" data-act="dup" aria-label="Duplicar registro ${i + 1}">Duplicar</button>
+        <button type="button" class="danger" data-act="del" aria-label="Eliminar registro ${i + 1}">Eliminar</button>
+      </div>
     </div>
     <label>Nombre (tienda · producto), opcional</label>
     <input data-f="nombre" autocomplete="off" placeholder="Ej: Carrefour · AOVE pack 3" value="${esc(it.nombre)}">
@@ -340,7 +351,7 @@ function cardHTML(it, i){
     <div class="step"><i>3</i> Resultado</div>
     <div data-out></div>
     <details><summary>Ver cuánto sale según los packs que compres</summary><div data-tabla></div></details>
-    <div class="tools"><button type="button" data-act="dup">Duplicar este registro</button></div>
+    <div class="total vacio" data-total><span>Total de la compra</span><b>—</b></div>
   </div>`;
 }
 
@@ -366,11 +377,16 @@ function update(){
       ? `Compras ${c.unidades} unidades` + (c.gramos > 0 ? ` · ${nf.format(c.gramos).replace(/,00$/, "")} g de atún escurrido` : "")
       : "";
 
+    const tot = el.querySelector("[data-total]");
     if (!listo(it)){
       out.innerHTML = `<div class="empty">Rellena precio, packs y unidades por pack para ver el resultado.</div>`;
       tabla.innerHTML = "";
+      tot.className = "total vacio";
+      tot.innerHTML = `<span>Total de la compra</span><b>—</b>`;
       return;
     }
+    tot.className = "total";
+    tot.innerHTML = `<span>Total de la compra</span><b>${eur(c.total)}</b>`;
 
     out.innerHTML = `
       <div class="res">

@@ -1,5 +1,5 @@
 // Service worker: funciona sin conexión. Sube la versión de CACHE cada vez que cambies index.html.
-const CACHE = "ofertas-v2";
+const CACHE = "ofertas-v3";
 const ASSETS = [
   "./",
   "./index.html",
