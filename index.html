@@ -15,13 +15,13 @@
 :root{
   --bg:#f4f6f5; --card:#ffffff; --ink:#14201d; --muted:#5b6b66; --line:#dbe3e0;
   --brand:#0f766e; --brand-ink:#ffffff; --good:#0a7d3b; --good-bg:#e3f5ea;
-  --warn:#9a5b00; --warn-bg:#fff3dc; --bad:#b42318; --field:#f0f4f2;
+  --warn:#9a5b00; --warn-bg:#fff3dc; --bad:#b42318; --field:#f0f4f2; --chip:#e6eeeb;
 }
 @media (prefers-color-scheme: dark){
   :root{
     --bg:#0e1514; --card:#172220; --ink:#e8f0ed; --muted:#98aaa4; --line:#27363a;
     --brand:#2dd4bf; --brand-ink:#04211d; --good:#5be08f; --good-bg:#12301f;
-    --warn:#ffc96b; --warn-bg:#352709; --bad:#ff8a80; --field:#0f1a19;
+    --warn:#ffc96b; --warn-bg:#352709; --bad:#ff8a80; --field:#0f1a19; --chip:#1f2f2d;
   }
 }
 *{box-sizing:border-box}
@@ -29,18 +29,14 @@ html{-webkit-text-size-adjust:100%}
 body{
   margin:0; background:var(--bg); color:var(--ink);
   font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
-  padding:0 16px calc(32px + env(safe-area-inset-bottom));
+  padding:0 16px calc(40px + env(safe-area-inset-bottom));
 }
-header{
-  padding:calc(14px + env(safe-area-inset-top)) 0 10px;
-}
+.wrap{max-width:640px; margin:0 auto}
+header{padding:calc(14px + env(safe-area-inset-top)) 0 4px}
 h1{font-size:20px; margin:0}
 .sub{color:var(--muted); font-size:13px; margin-top:2px}
-h2{font-size:15px; margin:22px 0 8px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted)}
-.card{
-  background:var(--card); border:1px solid var(--line); border-radius:14px;
-  padding:14px; margin-bottom:12px;
-}
+h2{font-size:15px; margin:24px 0 8px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted)}
+.card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px; margin-bottom:12px}
 label{display:block; font-size:12px; color:var(--muted); margin-bottom:4px}
 input,select{
   width:100%; font:inherit; color:var(--ink); background:var(--field);
@@ -48,31 +44,38 @@ input,select{
 }
 input:focus,select:focus{outline:2px solid var(--brand); outline-offset:1px}
 .grid{display:grid; grid-template-columns:1fr 1fr; gap:10px}
-.grid3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px}
 .full{grid-column:1/-1}
-.row{display:flex; gap:8px; align-items:center}
 button{
   font:inherit; min-height:44px; padding:0 14px; border-radius:10px; cursor:pointer;
   border:1px solid var(--line); background:var(--field); color:var(--ink);
 }
 button.primary{background:var(--brand); color:var(--brand-ink); border-color:var(--brand); font-weight:600}
 button.danger{color:var(--bad)}
-.btns{display:flex; gap:8px; margin-top:12px}
-.btns button{flex:1}
-.res{
-  display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:12px;
-  padding-top:12px; border-top:1px dashed var(--line);
+.head{display:flex; justify-content:space-between; align-items:center; margin-bottom:10px}
+.head b{font-size:17px}
+.head button{min-height:36px; padding:0 10px; font-size:14px}
+.step{
+  margin:16px 0 8px; font-size:12px; font-weight:700; letter-spacing:.05em; text-transform:uppercase;
+  color:var(--brand); display:flex; align-items:center; gap:8px;
 }
-.res div{min-width:0}
+.step i{
+  font-style:normal; display:inline-flex; width:20px; height:20px; border-radius:50%;
+  background:var(--brand); color:var(--brand-ink); align-items:center; justify-content:center; font-size:12px;
+}
+.chips{display:flex; flex-wrap:wrap; gap:8px}
+.chip{min-height:42px; padding:0 14px; border-radius:999px; background:var(--chip); font-size:15px}
+.chip.on{background:var(--brand); color:var(--brand-ink); border-color:var(--brand); font-weight:650}
+.desc{font-size:13px; color:var(--muted); margin-top:8px}
+.mini{font-size:13px; color:var(--muted); margin-top:8px}
+.res{
+  display:grid; grid-template-columns:repeat(2,1fr); gap:10px 8px;
+}
 .res .k{font-size:11px; color:var(--muted)}
 .res .v{font-size:17px; font-weight:650; font-variant-numeric:tabular-nums}
-.res .v.big{font-size:20px}
-.save{
-  margin-top:10px; padding:8px 10px; border-radius:10px; font-size:13px;
-  background:var(--good-bg); color:var(--good);
-}
+.res .v.big{font-size:21px}
+.save{margin-top:10px; padding:8px 10px; border-radius:10px; font-size:13px; background:var(--good-bg); color:var(--good)}
 .save.none{background:var(--field); color:var(--muted)}
-.best{font-size:13px; color:var(--muted); margin-top:8px}
+.empty{font-size:14px; color:var(--muted)}
 details{margin-top:10px}
 summary{cursor:pointer; color:var(--brand); font-size:14px; min-height:32px; display:flex; align-items:center}
 table{width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; font-size:13px}
@@ -80,71 +83,56 @@ th,td{padding:7px 5px; text-align:right; border-bottom:1px solid var(--line); wh
 th:first-child,td:first-child{text-align:left}
 th{color:var(--muted); font-weight:600; font-size:11px}
 tr.hi td{background:var(--good-bg); color:var(--good); font-weight:650}
-.rank td:first-child{white-space:normal; max-width:128px; line-height:1.25}
+td.nm{white-space:normal; line-height:1.25; max-width:150px}
 .tag{display:inline-block; font-size:10px; padding:1px 6px; border-radius:999px; margin-left:4px;
   background:var(--good-bg); color:var(--good); vertical-align:middle; font-weight:650}
 .tag.w{background:var(--warn-bg); color:var(--warn)}
-.note{font-size:12px; color:var(--muted); margin:6px 2px}
-.ideas{font-size:13px; color:var(--muted); padding-left:18px; margin:6px 0 0}
-.ideas li{margin:3px 0}
-.tools{display:flex; gap:8px; margin-top:6px}
-.tools button{flex:1; font-size:14px}
+.note{font-size:12px; color:var(--muted); margin:8px 2px}
+.verdict{font-size:15px; margin:0 0 12px}
+.verdict b{color:var(--good)}
+.warn{font-size:13px; background:var(--warn-bg); color:var(--warn); padding:8px 10px; border-radius:10px; margin-bottom:10px}
+.tools{display:flex; gap:8px; margin-top:6px; flex-wrap:wrap}
+.tools button{flex:1; min-width:140px}
+.sub2{font-size:12px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; margin:14px 0 6px}
 </style>
 </head>
 <body>
+<div class="wrap">
 <header>
   <h1>Calculadora de ofertas</h1>
-  <div class="sub">Compara el precio real por kilo de atún escurrido, con y sin oferta.</div>
+  <div class="sub">1 · Elige la oferta &nbsp;2 · Mete precio y cantidades &nbsp;3 · Añade otro registro y compara</div>
 </header>
 
 <main>
-  <h2>Lo que necesito</h2>
-  <div class="card">
-    <div class="grid">
-      <div>
-        <label for="objetivo">Latas / unidades necesarias</label>
-        <input id="objetivo" inputmode="numeric" autocomplete="off" value="12">
-      </div>
-      <div>
-        <label>&nbsp;</label>
-        <div class="note" style="margin:0;padding-top:8px">Se compran los packs mínimos para llegar a esa cantidad.</div>
-      </div>
-    </div>
-  </div>
-
-  <h2>Ranking</h2>
-  <div class="card" id="ranking"></div>
-
-  <h2>Opciones</h2>
+  <h2>Registros</h2>
   <div id="cards"></div>
   <div class="tools">
-    <button class="primary" id="add">+ Añadir opción</button>
-    <button id="reset">Restaurar ejemplos</button>
+    <button id="add">+ Añadir otro registro para comparar</button>
+  </div>
+  <div class="tools">
+    <button class="primary" id="calc">Calcular y comparar</button>
   </div>
 
-  <h2>Tipos de oferta que calcula</h2>
-  <div class="card">
-    <ul class="ideas">
-      <li><b>2ª unidad con -X %</b> (El Corte Inglés -70 %, Mercadona/Dia -50 %)</li>
-      <li><b>Lleva N, paga M</b> (3x2, 2x1, 4x3)</li>
-      <li><b>Descuento directo %</b> (-20 %, -30 %)</li>
-      <li><b>N unidades por un precio fijo</b> (2 por 9 €)</li>
-      <li><b>Ahorra X % al comprar N o más</b> (Amazon "ahorra 5 % al comprar 4")</li>
-      <li><b>Descuento en € por pack</b> (cupón de 1 € por unidad)</li>
-    </ul>
+  <h2 id="comp-h">Comparativa</h2>
+  <div class="card" id="comp"></div>
+
+  <div class="tools">
+    <button id="demo">Cargar ejemplo</button>
+    <button class="danger" id="clear">Vaciar todo</button>
   </div>
-  <p class="note">Los precios se guardan solo en este móvil. €/kg se calcula sobre peso neto escurrido, no sobre peso total.</p>
+  <p class="note">Los datos se guardan solo en este móvil. El precio por kilo se calcula sobre el peso escurrido (el atún sin aceite), no sobre el peso total de la lata.</p>
 </main>
+</div>
 
 <script>
 "use strict";
 
-/* ---------- Tipos de oferta ---------- */
+/* ---------- Tipos de oferta (motor) ---------- */
 const OFERTAS = {
   none:   { label: "Sin oferta", params: [] },
-  second: { label: "2ª unidad con -X %", params: [
-            { k: "x", label: "Descuento 2ª unidad (%)", def: 70 } ] },
-  nxm:    { label: "Lleva N, paga M (3x2…)", params: [
+  second: { label: "2ª unidad con descuento", params: [
+            { k: "x", label: "Descuento de la 2ª unidad (%)", def: 50 } ] },
+  nxm:    { label: "Lleva N, paga M", params: [
             { k: "n", label: "Llevas", def: 3 },
             { k: "m", label: "Pagas",  def: 2 } ] },
   pct:    { label: "Descuento directo %", params: [
@@ -152,12 +140,36 @@ const OFERTAS = {
   lote:   { label: "N unidades por precio fijo", params: [
             { k: "n", label: "Unidades del lote", def: 2 },
             { k: "y", label: "Precio del lote (€)", def: 9 } ] },
-  minpct: { label: "Ahorra X % si compras N+", params: [
+  minpct: { label: "Ahorra X % si compras N o más", params: [
             { k: "n", label: "Compra mínima (packs)", def: 4 },
             { k: "x", label: "Descuento (%)", def: 5 } ] },
-  eur:    { label: "Descuento € por pack", params: [
+  eur:    { label: "Descuento en € por pack", params: [
             { k: "d", label: "Descuento por pack (€)", def: 1 } ] }
 };
+
+/* ---------- Ofertas rápidas (botones del paso 1) ---------- */
+const PRESETS = [
+  { id: "none", label: "Sin oferta", oferta: "none",   o: {} },
+  { id: "2x1",  label: "2x1",        oferta: "nxm",    o: { n: 2, m: 1 } },
+  { id: "3x2",  label: "3x2",        oferta: "nxm",    o: { n: 3, m: 2 } },
+  { id: "4x3",  label: "4x3",        oferta: "nxm",    o: { n: 4, m: 3 } },
+  { id: "s50",  label: "2ª ud -50 %", oferta: "second", o: { x: 50 } },
+  { id: "s70",  label: "2ª ud -70 %", oferta: "second", o: { x: 70 } },
+  { id: "otra", label: "Otra…",      oferta: null,     o: null }
+];
+
+function describir(tipo, o){
+  switch (tipo){
+    case "none":   return "Sin oferta: pagas el precio completo.";
+    case "second": return `La 2ª unidad con ${o.x} % de descuento (cada 2 packs).`;
+    case "nxm":    return `Llevas ${o.n} y pagas ${o.m}.`;
+    case "pct":    return `${o.x} % de descuento en todos los packs.`;
+    case "lote":   return `${o.n} packs por ${nf.format(o.y)} €.`;
+    case "minpct": return `${o.x} % de descuento si compras ${o.n} packs o más.`;
+    case "eur":    return `${nf.format(o.d)} € menos en cada pack.`;
+  }
+  return "";
+}
 
 /* ---------- Cálculo ---------- */
 function r2(x){ return Math.round(x * 100 + 1e-6) / 100; }
@@ -166,6 +178,7 @@ function r2(x){ return Math.round(x * 100 + 1e-6) / 100; }
 function totalPacks(q, p, tipo, o){
   q = Math.max(0, Math.floor(q) || 0);
   p = p || 0;
+  o = o || {};
   switch (tipo){
     case "second": {
       const pares = Math.floor(q / 2);
@@ -194,20 +207,26 @@ function totalPacks(q, p, tipo, o){
   }
 }
 
-function calc(it, objetivo){
+function listo(it){
+  return it.precio > 0 && it.latas > 0 && it.packs > 0;
+}
+
+function calc(it){
   const lp = Math.max(1, Math.floor(it.latas) || 1);
-  const packs = Math.max(1, Math.ceil(Math.max(1, objetivo) / lp));
-  const latas = packs * lp;
+  const packs = Math.max(0, Math.floor(it.packs) || 0);
+  const unidades = packs * lp;
   const total = totalPacks(packs, it.precio, it.oferta, it.o);
   const base = r2(packs * it.precio);
-  const kg = latas * (it.g || 0) / 1000;
+  const kg = unidades * (it.g || 0) / 1000;
   return {
-    packs, latas, total, base,
+    packs, unidades, total, base,
     ahorro: base - total,
     pct: base > 0 ? (base - total) / base : 0,
-    perLata: total / latas,
-    perPack: total / packs,
-    perKg: kg > 0 ? total / kg : null
+    perUd: unidades > 0 ? total / unidades : null,
+    perPack: packs > 0 ? total / packs : null,
+    perKg: kg > 0 ? total / kg : null,
+    perKgBase: kg > 0 ? base / kg : null,
+    gramos: unidades * (it.g || 0)
   };
 }
 
@@ -231,23 +250,27 @@ const num = (s) => {
   const v = parseFloat(String(s).replace(",", ".").replace(/[^\d.\-]/g, ""));
   return isFinite(v) ? v : 0;
 };
-const esc = (s) => String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+const esc = (s) => String(s).replace(/[&<>"']/g,
+  c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+const mostrar = (v) => (v === 0 || v === undefined || v === null) ? "" : esc(v);
 
 /* ---------- Estado ---------- */
-const KEY = "calc-ofertas-v1";
-function mk(nombre, precio, latas, g, oferta, o){
-  return { nombre, precio, latas, g, oferta, o: Object.assign({}, o) };
+const KEY = "calc-ofertas-v2";
+function nuevo(){
+  return { nombre: "", preset: "none", oferta: "none", o: {}, precio: 0, latas: 0, g: 0, packs: 0 };
 }
-function ejemplos(){
-  return {
-    objetivo: 12,
-    items: [
-      mk("El Corte Inglés · AOVE pack 6", 11.95, 6, 48, "second", { x: 70 }),
-      mk("El Corte Inglés · aceite de oliva pack 6", 10.95, 6, 48, "second", { x: 70 }),
-      mk("Carrefour · AOVE pack 3", 6.65, 3, 55, "nxm", { n: 3, m: 2 }),
-      mk("Amazon · AOVE pack 6", 10.98, 6, 48, "none", {})
-    ]
+function vacio(){ return { items: [nuevo(), nuevo()] }; }
+function ejemplo(){
+  const mk = (nombre, preset, precio, latas, g, packs) => {
+    const p = PRESETS.find(x => x.id === preset);
+    return { nombre, preset, oferta: p.oferta, o: Object.assign({}, p.o), precio, latas, g, packs };
   };
+  return { items: [
+    mk("El Corte Inglés · AOVE pack 6", "s70", 11.95, 6, 48, 2),
+    mk("El Corte Inglés · aceite de oliva pack 6", "s70", 10.95, 6, 48, 2),
+    mk("Carrefour · AOVE pack 3", "3x2", 6.65, 3, 55, 4),
+    mk("Amazon · AOVE pack 6", "none", 10.98, 6, 48, 2)
+  ] };
 }
 let state;
 function cargar(){
@@ -255,58 +278,69 @@ function cargar(){
     const raw = localStorage.getItem(KEY);
     if (raw){
       const s = JSON.parse(raw);
-      if (s && Array.isArray(s.items)) return s;
+      if (s && Array.isArray(s.items) && s.items.length) return s;
     }
   } catch (e) {}
-  return ejemplos();
+  return vacio();
 }
 function guardar(){
   try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
 }
-function defaultsOferta(tipo){
-  const o = {};
-  OFERTAS[tipo].params.forEach(p => { o[p.k] = p.def; });
-  return o;
-}
+const etiqueta = (it, i) => (it.nombre && it.nombre.trim()) || ("Registro " + (i + 1));
 
-/* ---------- Render ---------- */
+/* ---------- Render de registros ---------- */
 const $cards = document.getElementById("cards");
-const $rank = document.getElementById("ranking");
-const $obj = document.getElementById("objetivo");
+const $comp = document.getElementById("comp");
 
 function cardHTML(it, i){
-  const t = OFERTAS[it.oferta];
-  const opts = Object.keys(OFERTAS).map(k =>
-    `<option value="${k}"${k === it.oferta ? " selected" : ""}>${OFERTAS[k].label}</option>`).join("");
-  const params = t.params.map(p =>
-    `<div><label>${p.label}</label>
-     <input inputmode="decimal" autocomplete="off" data-o="${p.k}" value="${esc(it.o[p.k] ?? p.def)}"></div>`).join("");
-  const pcls = t.params.length === 1 ? "full" : "";
+  const chips = PRESETS.map(p =>
+    `<button type="button" class="chip${it.preset === p.id ? " on" : ""}" data-preset="${p.id}">${p.label}</button>`).join("");
+
+  let otra = "";
+  if (it.preset === "otra"){
+    const t = OFERTAS[it.oferta] || OFERTAS.none;
+    const opts = Object.keys(OFERTAS).map(k =>
+      `<option value="${k}"${k === it.oferta ? " selected" : ""}>${OFERTAS[k].label}</option>`).join("");
+    const params = t.params.map(p =>
+      `<div><label>${p.label}</label>
+       <input inputmode="decimal" autocomplete="off" data-o="${p.k}" value="${esc(it.o[p.k] ?? p.def)}"></div>`).join("");
+    otra = `<div class="grid" style="margin-top:10px">
+      <div class="full"><label>Tipo de oferta</label><select data-f="oferta">${opts}</select></div>
+      ${params}
+    </div>`;
+  }
+
   return `
   <div class="card" data-i="${i}">
+    <div class="head">
+      <b>Registro ${i + 1}</b>
+      <button type="button" class="danger" data-act="del" aria-label="Eliminar registro ${i + 1}">Eliminar</button>
+    </div>
+    <label>Nombre (tienda · producto), opcional</label>
+    <input data-f="nombre" autocomplete="off" placeholder="Ej: Carrefour · AOVE pack 3" value="${esc(it.nombre)}">
+
+    <div class="step"><i>1</i> Elige la oferta</div>
+    <div class="chips">${chips}</div>
+    ${otra}
+    <div class="desc" data-desc></div>
+
+    <div class="step"><i>2</i> Precio y cantidades</div>
     <div class="grid">
-      <div class="full">
-        <label>Nombre (tienda · producto)</label>
-        <input data-f="nombre" autocomplete="off" value="${esc(it.nombre)}">
-      </div>
-      <div><label>Precio del pack (€)</label>
-        <input inputmode="decimal" autocomplete="off" data-f="precio" value="${esc(it.precio)}"></div>
-      <div><label>Latas por pack</label>
-        <input inputmode="numeric" autocomplete="off" data-f="latas" value="${esc(it.latas)}"></div>
-      <div class="full"><label>Peso escurrido por lata (g)</label>
-        <input inputmode="decimal" autocomplete="off" data-f="g" value="${esc(it.g)}"></div>
-      <div class="full"><label>Oferta</label>
-        <select data-f="oferta">${opts}</select></div>
-      ${t.params.length ? `<div class="full"><div class="grid ${pcls}">${params}</div></div>` : ""}
+      <div><label>Precio de 1 pack (€)</label>
+        <input inputmode="decimal" autocomplete="off" data-f="precio" placeholder="0,00" value="${mostrar(it.precio)}"></div>
+      <div><label>Packs que compro</label>
+        <input inputmode="numeric" autocomplete="off" data-f="packs" placeholder="0" value="${mostrar(it.packs)}"></div>
+      <div><label>Unidades (latas) por pack</label>
+        <input inputmode="numeric" autocomplete="off" data-f="latas" placeholder="0" value="${mostrar(it.latas)}"></div>
+      <div><label>Peso escurrido por lata (g)</label>
+        <input inputmode="decimal" autocomplete="off" data-f="g" placeholder="0" value="${mostrar(it.g)}"></div>
     </div>
-    <div class="res" data-res></div>
-    <div data-save></div>
-    <div class="best" data-best></div>
-    <details data-det><summary>Tabla por cantidad de packs</summary><div data-tabla></div></details>
-    <div class="btns">
-      <button data-act="dup">Duplicar</button>
-      <button class="danger" data-act="del">Eliminar</button>
-    </div>
+    <div class="mini" data-info></div>
+
+    <div class="step"><i>3</i> Resultado</div>
+    <div data-out></div>
+    <details><summary>Ver cuánto sale según los packs que compres</summary><div data-tabla></div></details>
+    <div class="tools"><button type="button" data-act="dup">Duplicar este registro</button></div>
   </div>`;
 }
 
@@ -315,85 +349,117 @@ function renderCards(){
   update();
 }
 
+/* ---------- Actualización de resultados ---------- */
 function update(){
-  const objetivo = Math.max(1, Math.floor(state.objetivo) || 1);
-  const calcs = state.items.map(it => calc(it, objetivo));
-
-  // Tarjetas
   state.items.forEach((it, i) => {
     const el = $cards.querySelector(`.card[data-i="${i}"]`);
     if (!el) return;
-    const c = calcs[i];
-    el.querySelector("[data-res]").innerHTML = `
-      <div><div class="k">Packs</div><div class="v">${c.packs}</div></div>
-      <div><div class="k">Latas</div><div class="v">${c.latas}</div></div>
-      <div><div class="k">Total</div><div class="v big">${eur(c.total)}</div></div>
-      <div><div class="k">€ / lata</div><div class="v">${eur(c.perLata)}</div></div>
-      <div><div class="k">€ / pack</div><div class="v">${eur(c.perPack)}</div></div>
-      <div><div class="k">€ / kg escurrido</div><div class="v">${eur(c.perKg)}</div></div>`;
-    const sv = el.querySelector("[data-save]");
-    if (c.ahorro > 0.004){
-      sv.innerHTML = `<div class="save">Ahorras ${eur(c.ahorro)} (${(c.pct * 100).toFixed(0)} %) frente a ${eur(c.base)} sin oferta</div>`;
-    } else {
-      sv.innerHTML = `<div class="save none">Sin ahorro con esta cantidad (${eur(c.base)})</div>`;
+    el.querySelector("[data-desc]").textContent =
+      it.preset === "otra" && it.oferta === "none" ? "" : describir(it.oferta, it.o);
+
+    const c = calc(it);
+    const info = el.querySelector("[data-info]");
+    const out = el.querySelector("[data-out]");
+    const tabla = el.querySelector("[data-tabla]");
+
+    info.textContent = c.unidades > 0
+      ? `Compras ${c.unidades} unidades` + (c.gramos > 0 ? ` · ${nf.format(c.gramos).replace(/,00$/, "")} g de atún escurrido` : "")
+      : "";
+
+    if (!listo(it)){
+      out.innerHTML = `<div class="empty">Rellena precio, packs y unidades por pack para ver el resultado.</div>`;
+      tabla.innerHTML = "";
+      return;
     }
-    const mb = mejorCantidad(it);
-    el.querySelector("[data-best]").textContent =
-      it.oferta === "none"
-        ? ""
-        : `Mejor precio por pack con ${mb.q} pack${mb.q > 1 ? "s" : ""}: ${eur(mb.pp)} cada uno` +
-          (mb.perKg != null ? ` · ${eur(mb.perKg)}/kg` : "");
+
+    out.innerHTML = `
+      <div class="res">
+        <div><div class="k">Precio con oferta</div><div class="v big">${eur(c.total)}</div></div>
+        <div><div class="k">Precio sin oferta</div><div class="v big">${eur(c.base)}</div></div>
+        <div><div class="k">€ por pack</div><div class="v">${eur(c.perPack)}</div></div>
+        <div><div class="k">€ por unidad (lata)</div><div class="v">${eur(c.perUd)}</div></div>
+        <div><div class="k">€/kg escurrido con oferta</div><div class="v">${eur(c.perKg)}</div></div>
+        <div><div class="k">€/kg escurrido sin oferta</div><div class="v">${eur(c.perKgBase)}</div></div>
+      </div>
+      ${c.ahorro > 0.004
+        ? `<div class="save">Ahorras ${eur(c.ahorro)} (${(c.pct * 100).toFixed(0)} %) con esta oferta</div>`
+        : `<div class="save none">Con esta cantidad la oferta no te ahorra nada.</div>`}
+      ${c.perKg == null ? `<div class="mini">Pon el peso escurrido por lata para ver el precio por kilo.</div>` : ""}`;
+
     // Tabla por cantidad
+    const mb = mejorCantidad(it);
     let filas = "";
-    const minpp = mb.pp;
     for (let q = 1; q <= 12; q++){
       const t = totalPacks(q, it.precio, it.oferta, it.o);
-      const lp = Math.max(1, Math.floor(it.latas) || 1);
-      const kg = q * lp * (it.g || 0) / 1000;
+      const kg = q * it.latas * (it.g || 0) / 1000;
       const base = r2(q * it.precio);
-      const hi = Math.abs(t / q - minpp) < 1e-9 ? ' class="hi"' : "";
-      filas += `<tr${hi}><td>${q}</td><td>${q * lp}</td><td>${n2(t)}</td><td>${n2(t / q)}</td><td>${kg > 0 ? n2(t / kg) : "—"}</td><td>${n2(base - t)}</td></tr>`;
+      const hi = Math.abs(t / q - mb.pp) < 1e-9 && it.oferta !== "none" ? ' class="hi"' : "";
+      filas += `<tr${hi}><td>${q}</td><td>${n2(t)}</td><td>${n2(base)}</td><td>${n2(t / q)}</td><td>${kg > 0 ? n2(t / kg) : "—"}</td></tr>`;
     }
-    el.querySelector("[data-tabla]").innerHTML =
-      `<table><thead><tr><th>Packs</th><th>Latas</th><th>Total €</th><th>€/pack</th><th>€/kg</th><th>Ahorro €</th></tr></thead><tbody>${filas}</tbody></table>`;
+    tabla.innerHTML = `
+      ${it.oferta !== "none" ? `<div class="mini" style="margin:0 0 6px">Menor precio por pack con ${mb.q} pack${mb.q > 1 ? "s" : ""} (${eur(mb.pp)} cada uno). En verde, las cantidades donde la oferta se aprovecha del todo.</div>` : ""}
+      <table><thead><tr><th>Packs</th><th>Con oferta €</th><th>Sin oferta €</th><th>€/pack</th><th>€/kg</th></tr></thead><tbody>${filas}</tbody></table>`;
   });
 
-  // Ranking
-  const rows = state.items.map((it, i) => ({ it, c: calcs[i] }));
-  const conKg = rows.filter(r => r.c.perKg != null).sort((a, b) => a.c.perKg - b.c.perKg);
-  const sinKg = rows.filter(r => r.c.perKg == null);
-  const orden = conKg.concat(sinKg);
-  const mejorKg = conKg.length ? conKg[0].c.perKg : null;
-  const menorGasto = rows.length ? Math.min.apply(null, rows.map(r => r.c.total)) : null;
-  if (!orden.length){
-    $rank.innerHTML = `<div class="note">Añade al menos una opción.</div>`;
+  renderComparativa();
+}
+
+function renderComparativa(){
+  const filas = state.items.map((it, i) => ({ it, i, c: calc(it), ok: listo(it) })).filter(r => r.ok);
+  if (!filas.length){
+    $comp.innerHTML = `<div class="empty">Aún no hay nada que comparar. Rellena el precio, los packs y las unidades de al menos 2 registros.</div>`;
     return;
   }
-  const filasR = orden.map((r, idx) => {
-    const tags = [];
-    if (idx === 0 && r.c.perKg != null) tags.push('<span class="tag">€/kg</span>');
-    if (Math.abs(r.c.total - menorGasto) < 0.005) tags.push('<span class="tag w">gasta menos</span>');
-    const dif = (mejorKg != null && r.c.perKg != null && idx > 0)
-      ? `+${((r.c.perKg / mejorKg - 1) * 100).toFixed(0)} %` : "—";
-    return `<tr class="${idx === 0 && r.c.perKg != null ? "hi" : ""}">
-      <td>${esc(r.it.nombre || "Sin nombre")}${tags.join("")}</td>
-      <td>${n2(r.c.total)}</td><td>${r.c.latas}</td><td>${n2(r.c.perKg)}</td><td>${dif}</td></tr>`;
+
+  const conKg = filas.filter(r => r.c.perKg != null).sort((a, b) => a.c.perKg - b.c.perKg);
+  const sinKg = filas.filter(r => r.c.perKg == null);
+  const ordenKg = conKg.concat(sinKg);
+  const mejor = conKg.length ? conKg[0] : null;
+  const barato = filas.slice().sort((a, b) => a.c.total - b.c.total)[0];
+
+  let html = "";
+  if (filas.length < 2){
+    html += `<div class="warn">Solo hay 1 registro completo. Rellena otro para poder comparar.</div>`;
+  }
+  if (mejor){
+    html += `<p class="verdict">Más barato por kilo: <b>${esc(etiqueta(mejor.it, mejor.i))}</b> a ${eur(mejor.c.perKg)}/kg.</p>`;
+  }
+  if (filas.length > 1){
+    html += `<p class="verdict">Gastas menos en total con: <b>${esc(etiqueta(barato.it, barato.i))}</b> (${eur(barato.c.total)}).</p>`;
+    const uds = new Set(filas.map(r => r.c.unidades));
+    if (uds.size > 1){
+      html += `<div class="warn">Los registros no compran las mismas unidades. Para comparar precios, fíjate en €/kg, no en el total.</div>`;
+    }
+  }
+
+  // Tabla 1: precio por kilo
+  const f1 = ordenKg.map((r, idx) => {
+    const hi = (mejor && r === mejor) ? ' class="hi"' : "";
+    const dif = (mejor && r.c.perKg != null && r !== mejor)
+      ? `+${((r.c.perKg / mejor.c.perKg - 1) * 100).toFixed(0)} %` : "—";
+    return `<tr${hi}><td class="nm">${esc(etiqueta(r.it, r.i))}</td>
+      <td>${n2(r.c.perKg)}</td><td>${n2(r.c.perKgBase)}</td><td>${dif}</td></tr>`;
   }).join("");
-  $rank.innerHTML = `
-    <table class="rank"><thead><tr><th>Opción</th><th>Total €</th><th>Latas</th><th>€/kg</th><th>vs 1º</th></tr></thead>
-    <tbody>${filasR}</tbody></table>
-    <div class="note">Ordenado por €/kg escurrido para ${objetivo} latas como mínimo. "Gasta menos" = menor importe total, aunque lleves distinto nº de latas.</div>`;
+  html += `<div class="sub2">Precio por kilo escurrido</div>
+    <table><thead><tr><th>Registro</th><th>€/kg con oferta</th><th>€/kg sin oferta</th><th>vs mejor</th></tr></thead>
+    <tbody>${f1}</tbody></table>`;
+
+  // Tabla 2: importes
+  const f2 = filas.map(r => {
+    const tag = (filas.length > 1 && r === barato) ? '<span class="tag w">menor gasto</span>' : "";
+    return `<tr><td class="nm">${esc(etiqueta(r.it, r.i))}${tag}</td>
+      <td>${n2(r.c.total)}</td><td>${n2(r.c.base)}</td><td>${n2(r.c.ahorro)}</td><td>${r.c.unidades}</td></tr>`;
+  }).join("");
+  html += `<div class="sub2">Importes</div>
+    <table><thead><tr><th>Registro</th><th>Con oferta €</th><th>Sin oferta €</th><th>Ahorro €</th><th>Uds</th></tr></thead>
+    <tbody>${f2}</tbody></table>
+    <div class="note">Con oferta = lo que pagas. Sin oferta = lo mismo a precio completo. Las cantidades son las de cada registro.</div>`;
+
+  $comp.innerHTML = html;
 }
 
 /* ---------- Eventos ---------- */
-$obj.value = "";
 state = cargar();
-$obj.value = state.objetivo;
-
-$obj.addEventListener("input", () => {
-  state.objetivo = Math.max(1, Math.floor(num($obj.value)) || 1);
-  guardar(); update();
-});
 
 $cards.addEventListener("input", (e) => {
   const card = e.target.closest(".card");
@@ -401,7 +467,8 @@ $cards.addEventListener("input", (e) => {
   const it = state.items[+card.dataset.i];
   const f = e.target.dataset.f, o = e.target.dataset.o;
   if (f === "nombre") it.nombre = e.target.value;
-  else if (f === "precio" || f === "latas" || f === "g") it[f] = num(e.target.value);
+  else if (f === "precio" || f === "g") it[f] = num(e.target.value);
+  else if (f === "latas" || f === "packs") it[f] = Math.max(0, Math.floor(num(e.target.value)));
   else if (o) it.o[o] = num(e.target.value);
   else return;
   guardar(); update();
@@ -412,37 +479,68 @@ $cards.addEventListener("change", (e) => {
   const card = e.target.closest(".card");
   const it = state.items[+card.dataset.i];
   it.oferta = e.target.value;
-  it.o = defaultsOferta(it.oferta);
+  it.o = {};
+  OFERTAS[it.oferta].params.forEach(p => { it.o[p.k] = p.def; });
   guardar(); renderCards();
 });
 
 $cards.addEventListener("click", (e) => {
+  const chip = e.target.closest("button[data-preset]");
+  if (chip){
+    const it = state.items[+chip.closest(".card").dataset.i];
+    const p = PRESETS.find(x => x.id === chip.dataset.preset);
+    it.preset = p.id;
+    if (p.id === "otra"){
+      if (it.oferta === "none" || !OFERTAS[it.oferta]) it.oferta = "pct";
+      if (!Object.keys(it.o || {}).length || it.preset === "otra"){
+        it.o = {};
+        OFERTAS[it.oferta].params.forEach(q => { it.o[q.k] = q.def; });
+      }
+    } else {
+      it.oferta = p.oferta;
+      it.o = Object.assign({}, p.o);
+    }
+    guardar(); renderCards();
+    return;
+  }
   const b = e.target.closest("button[data-act]");
   if (!b) return;
   const i = +b.closest(".card").dataset.i;
   if (b.dataset.act === "del"){
     state.items.splice(i, 1);
+    if (!state.items.length) state.items.push(nuevo());
   } else {
     const c = JSON.parse(JSON.stringify(state.items[i]));
-    c.nombre += " (copia)";
+    c.nombre = (c.nombre ? c.nombre + " " : "") + "(copia)";
     state.items.splice(i + 1, 0, c);
   }
   guardar(); renderCards();
 });
 
 document.getElementById("add").addEventListener("click", () => {
-  state.items.push(mk("Nueva opción", 0, 1, 0, "none", {}));
+  state.items.push(nuevo());
   guardar(); renderCards();
   const cards = $cards.querySelectorAll(".card");
   const last = cards[cards.length - 1];
   if (last) last.scrollIntoView({ behavior: "smooth", block: "start" });
 });
 
-document.getElementById("reset").addEventListener("click", () => {
-  if (!confirm("¿Restaurar los ejemplos? Se perderán tus opciones.")) return;
-  state = ejemplos();
-  $obj.value = state.objetivo;
+document.getElementById("calc").addEventListener("click", () => {
+  update();
+  document.getElementById("comp-h").scrollIntoView({ behavior: "smooth", block: "start" });
+});
+
+document.getElementById("demo").addEventListener("click", () => {
+  if (!confirm("¿Cargar el ejemplo? Se sustituirán tus registros actuales.")) return;
+  state = ejemplo();
   guardar(); renderCards();
+});
+
+document.getElementById("clear").addEventListener("click", () => {
+  if (!confirm("¿Vaciar todos los registros?")) return;
+  state = vacio();
+  guardar(); renderCards();
+  window.scrollTo({ top: 0, behavior: "smooth" });
 });
 
 renderCards();
